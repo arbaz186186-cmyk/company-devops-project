@@ -39,7 +39,7 @@ pipeline {
 
             steps {
 
-                sh 'docker build -t company-devops-project:v1 app'
+                sh 'docker build -t company-devops-project:${BUILD_NUMBER} app'
 
             }
 
@@ -69,7 +69,7 @@ pipeline {
 
             steps {
 
-                sh 'docker run -d --name company-devops-container -p 8088:80 company-devops-project:v1'
+                sh 'docker run -d --name company-devops-container -p 8088:80 company-devops-project:${BUILD_NUMBER}'
 
             }
 
