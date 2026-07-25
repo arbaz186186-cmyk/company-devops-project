@@ -20,7 +20,6 @@ pipeline {
 
                 sh 'pwd'
                 sh 'ls'
-                sh 'ls -R'
 
             }
 
@@ -40,8 +39,37 @@ pipeline {
 
             steps {
 
-                sh 'pwd'
-                sh 'ls -R'
+                sh 'docker build -t company-devops-project:v1 app'
+
+            }
+
+        }
+
+        stage('Stop Old Container') {
+
+            steps {
+
+                sh 'docker stop company-devops-container || true'
+
+            }
+
+        }
+
+        stage('Remove Old Container') {
+
+            steps {
+
+                sh 'docker rm company-devops-container || true'
+
+            }
+
+        }
+
+        stage('Run New Container') {
+
+            steps {
+
+                sh 'docker run -d --name company-devops-container -p 8088:80 company-devops-project:v1'
 
             }
 
