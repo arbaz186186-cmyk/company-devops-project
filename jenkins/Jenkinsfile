@@ -20,6 +20,7 @@ pipeline {
 
                 sh 'pwd'
                 sh 'ls'
+                sh 'ls -R'
 
             }
 
@@ -30,6 +31,17 @@ pipeline {
             steps {
 
                 sh 'docker --version'
+
+            }
+
+        }
+
+        stage('Build Docker Image') {
+
+            steps {
+
+                sh 'pwd'
+                sh 'ls -R'
 
             }
 
