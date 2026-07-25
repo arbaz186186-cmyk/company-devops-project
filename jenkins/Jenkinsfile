@@ -1,0 +1,30 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Project Information') {
+
+            steps {
+
+                echo 'Starting Company DevOps Project Pipeline'
+
+            }
+
+        }
+
+        stage('Check Workspace') {
+
+            steps {
+
+                sh 'pwd'
+                sh 'ls'
+
+            }
+
+        }
+
+    }
+
+}
