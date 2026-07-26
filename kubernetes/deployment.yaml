@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: company-devops-deployment
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: company-devops
+
+  template:
+    metadata:
+      labels:
+        app: company-devops
+
+    spec:
+      containers:
+      - name: company-devops-container
+        image: arbaz186/company-devops-project:11
+
+        ports:
+        - containerPort: 80

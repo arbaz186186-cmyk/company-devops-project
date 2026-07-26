@@ -2,79 +2,56 @@ pipeline {
 
     agent any
 
+    environment {
+        IMAGE_NAME = "arbaz186/company-devops-project"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
     stages {
 
         stage('Project Information') {
-
             steps {
-
-                echo 'Starting Company DevOps Project Pipeline'
-
+                echo 'Starting Company DevOps CI/CD Pipeline'
             }
-
-        }
-
-        stage('Check Workspace') {
-
-            steps {
-
-                sh 'pwd'
-                sh 'ls'
-
-            }
-
         }
 
         stage('Check Docker') {
-
             steps {
-
                 sh 'docker --version'
-
             }
-
         }
 
         stage('Build Docker Image') {
-
             steps {
-
-                sh 'docker build -t company-devops-project:${BUILD_NUMBER} app'
-
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} app'
             }
-
         }
 
-        stage('Stop Old Container') {
-
+        stage('Push Docker Image') {
             steps {
-
-                sh 'docker stop company-devops-container || true'
-
+                sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
             }
-
         }
 
-        stage('Remove Old Container') {
-
+        stage('Update Kubernetes') {
             steps {
-
-                sh 'docker rm company-devops-container || true'
-
+                sh '''
+                sed -i "s|image:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" kubernetes/deployment.yaml
+                kubectl apply -f kubernetes/deployment.yaml
+                '''
             }
-
         }
 
-        stage('Run New Container') {
+    }
 
-            steps {
-
-                sh 'docker run -d --name company-devops-container -p 8088:80 company-devops-project:${BUILD_NUMBER}'
-
-            }
-
+    post {
+        success {
+            echo 'Deployment Successful'
         }
 
+        failure {
+            echo 'Deployment Failed'
+        }
     }
 
 }
