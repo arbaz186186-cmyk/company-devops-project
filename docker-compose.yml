@@ -1,0 +1,37 @@
+services:
+
+  website:
+    image: arbaz186/company-devops-project:19
+    container_name: company-website
+    ports:
+      - "8085:80"
+    restart: always
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: company-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: employee_db
+      MYSQL_USER: arbaz
+      MYSQL_PASSWORD: arbaz123
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: company-phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root123
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
