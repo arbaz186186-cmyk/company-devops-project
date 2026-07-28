@@ -1,67 +1,67 @@
-```groovy
 pipeline {
 
-    agent any
+```
+agent any
 
-    environment {
-        IMAGE_NAME = "arbaz186/company-devops-project"
-        CONTAINER_NAME = "company-website"
-        PORT = "8085"
+environment {
+    IMAGE_NAME = "arbaz186/company-devops-project"
+    CONTAINER_NAME = "company-website"
+    PORT = "8085"
+}
+
+stages {
+
+    stage('Git Checkout') {
+        steps {
+            checkout scm
+        }
     }
 
-    stages {
-
-        stage('Git Checkout') {
-            steps {
-                checkout scm
-            }
+    stage('Build Docker Image') {
+        steps {
+            sh '''
+            docker build -t ${IMAGE_NAME}:latest app
+            '''
         }
-
-        stage('Build Docker Image') {
-            steps {
-                sh '''
-                docker build -t ${IMAGE_NAME}:latest app
-                '''
-            }
-        }
-
-        stage('Stop Old Container') {
-            steps {
-                sh '''
-                docker rm -f ${CONTAINER_NAME} || true
-                '''
-            }
-        }
-
-        stage('Run New Container') {
-            steps {
-                sh '''
-                docker run -d \
-                --name ${CONTAINER_NAME} \
-                -p ${PORT}:80 \
-                ${IMAGE_NAME}:latest
-                '''
-            }
-        }
-
     }
 
-    post {
-
-        success {
-            echo "=================================="
-            echo "Deployment Successful"
-            echo "Website Updated Successfully"
-            echo "=================================="
+    stage('Stop Old Container') {
+        steps {
+            sh '''
+            docker rm -f ${CONTAINER_NAME} || true
+            '''
         }
+    }
 
-        failure {
-            echo "=================================="
-            echo "Deployment Failed"
-            echo "=================================="
+    stage('Run New Container') {
+        steps {
+            sh '''
+            docker run -d \
+              --name ${CONTAINER_NAME} \
+              -p ${PORT}:80 \
+              ${IMAGE_NAME}:latest
+            '''
         }
-
     }
 
 }
-```
+
+post {
+
+    success {
+        echo "=================================="
+        echo "Deployment Successful"
+        echo "Website Updated Successfully"
+        echo "=================================="
+    }
+
+    failure {
+        echo "=================================="
+        echo "Deployment Failed"
+        echo "=================================="
+    }
+
+}
+
+
+}
